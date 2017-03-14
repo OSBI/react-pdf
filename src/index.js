@@ -24,25 +24,43 @@ class SaikuPdf extends Component {
   constructor(props) {
     super(props);
     this.onDocumentComplete = this.onDocumentComplete.bind(this);
+    this.onDocumentError = this.onDocumentError.bind(this);
     this.onPageComplete = this.onPageComplete.bind(this);
+    this.onPageError = this.onPageError.bind(this);
   }
 
   static propTypes = {
     content: PropTypes.string,
     file: PropTypes.string,
-    loading: PropTypes.any,
+    error: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.node
+    ]),
+    loading: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.node
+    ]),
+    noData: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.node
+    ]),
     page: PropTypes.number,
     scale: PropTypes.number,
+    width: PropTypes.number,
     rotate: PropTypes.number,
     onDocumentComplete: PropTypes.func,
+    onDocumentError: PropTypes.func,
     onPageComplete: PropTypes.func,
+    onPageError: PropTypes.func,
     style: PropTypes.object
   };
 
   static defaultProps = {
     page: 1,
     scale: 1.0,
-    loading: <div>Loading PDF...</div>
+    error: 'Failed to load PDF file.',
+    loading: 'Loading PDF...',
+    noData: 'No PDF file specified.'
   };
 
   state = {
@@ -67,7 +85,9 @@ class SaikuPdf extends Component {
       (nextProps.scale && nextProps.scale !== this.props.scale)) ||
       (nextProps.rotate && nextProps.rotate !== this.props.rotate))) {
       this.setState({ page: null });
-      pdf.getPage(nextProps.page).then(this.onPageComplete);
+      pdf.getPage(nextProps.page)
+        .then(this.onPageComplete)
+        .catch(this.onPageError);
     }
   }
 
@@ -75,8 +95,9 @@ class SaikuPdf extends Component {
     return (
       nextState.pdf !== this.state.pdf ||
       nextState.page !== this.state.page ||
+      nextProps.scale !== this.props.scale ||
       nextProps.width !== this.props.width ||
-      nextProps.scale !== this.props.scale
+      nextProps.rotate !== this.props.rotate
     );
   }
 
@@ -86,10 +107,22 @@ class SaikuPdf extends Component {
     const { onDocumentComplete } = this.props;
 
     if (typeof onDocumentComplete === 'function') {
-      onDocumentComplete(pdf);
+      onDocumentComplete(pdf.numPages);
     }
 
-    pdf.getPage(this.props.page).then(this.onPageComplete);
+    pdf.getPage(this.props.page)
+      .then(this.onPageComplete)
+      .catch(this.onPageError);
+  }
+
+  onDocumentError(error) {
+    this.setState({ pdf: false });
+
+    const { onDocumentError } = this.props;
+
+    if (typeof onDocumentError === 'function') {
+      onDocumentError(error);
+    }
   }
 
   onPageComplete(page) {
@@ -103,8 +136,35 @@ class SaikuPdf extends Component {
     }
   }
 
+  onPageError(error) {
+    this.setState({ pdf: false });
+
+    const { onPageError } = this.props;
+
+    if (typeof onPageError === 'function') {
+      onPageError(error);
+    }
+  }
+
+  getPageScale(page = this.state.page) {
+    const { scale, width } = this.props;
+
+    // be default, we'll render page at 100% * scale width.
+    let pageScale = 1;
+
+    // if width is defined, calculate the scale of the page
+    // so it could be of desired width.
+    if (width) {
+      pageScale = width / page.getViewport(scale).width;
+    }
+
+    return scale * pageScale;
+  }
+
   loadByteArray(byteArray) {
-    window.PDFJS.getDocument(byteArray).then(this.onDocumentComplete);
+    window.PDFJS.getDocument(byteArray)
+      .then(this.onDocumentComplete)
+      .catch(this.onDocumentError);
   }
 
   loadPDFDocument(props) {
@@ -143,6 +203,24 @@ class SaikuPdf extends Component {
     }
   }
 
+  renderNoData() {
+    return (
+      <div>{this.props.noData}</div>
+    );
+  }
+
+  renderError() {
+    return (
+      <div>{this.props.error}</div>
+    );
+  }
+
+  renderLoader() {
+    return (
+      <div>{this.props.loading}</div>
+    );
+  }
+
   renderPdf() {
     const { page } = this.state;
 
@@ -154,23 +232,37 @@ class SaikuPdf extends Component {
         canvas = canvas.getDOMNode();
       }
 
+      const pixelRatio = window.devicePixelRatio || 1;
       const canvasContext = canvas.getContext('2d');
-      const { scale, rotate } = this.props;
-      const viewport = page.getViewport(scale, rotate);
+      const viewport = page.getViewport(this.getPageScale() * pixelRatio);
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
+      canvas.style.height = `${viewport.height / pixelRatio}px`;
+      canvas.style.width = `${viewport.width / pixelRatio}px`;
       page.render({ canvasContext, viewport });
     }
   }
 
   render() {
-    const { loading, style } = this.props;
-    const { page } = this.state;
+    const { file, style } = this.props;
+    const { pdf, page } = this.state;
 
-    return page
-      ? <canvas style={style} ref="canvas" />
-      : loading || <div>Loading PDF...</div>;
+    if (!file) {
+      return this.renderNoData();
+    }
+
+    if (pdf === false || page === false) {
+      return this.renderError();
+    }
+
+    if (pdf === null || page === null) {
+      return this.renderLoader();
+    }
+
+    return (
+      <canvas style={style} ref="canvas" />
+    );
   }
 }
 
