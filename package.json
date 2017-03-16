@@ -26,12 +26,7 @@
     "type": "git",
     "url": "git+https://github.com/OSBI/saiku-react-pdfjs.git"
   },
-  "licenses": [
-    {
-      "type": "Apache-2.0",
-      "url": "https://github.com/OSBI/saiku-report-viewer-ui/blob/master/LICENSE"
-    }
-  ],
+  "license": "Apache-2.0",
   "keywords": [
     "react",
     "reactjs",

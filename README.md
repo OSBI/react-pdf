@@ -2,6 +2,15 @@
 
 > A React component to wrap [PDF.js](https://github.com/mozilla/pdf.js).
 
+[![npm downloads](https://img.shields.io/npm/dt/saiku-react-pdfjs.svg?style=flat)](https://www.npmjs.com/package/saiku-react-pdfjs)
+[![npm version](https://img.shields.io/npm/v/saiku-react-pdfjs.svg?style=flat)](https://www.npmjs.com/package/saiku-react-pdfjs)
+[![npm license](https://img.shields.io/npm/l/saiku-react-pdfjs.svg?style=flat)](https://www.npmjs.com/package/saiku-react-pdfjs)
+
+## Requirements
+
+- [Node.js](https://nodejs.org/en/download/) v6.0.0 or higher
+- NPM (v3.0.0+ recommended) (this comes with Node.js)
+
 ## Installation
 
 **Using NPM:**
