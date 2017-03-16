@@ -32,12 +32,12 @@ class MyApp extends Component {
     this.onPageComplete = this.onPageComplete.bind(this);
   }
 
-  onDocumentComplete({ total }) {
-    this.setState({ total });
+  onDocumentComplete(numberOfPages, document) {
+    this.setState({ numberOfPages });
   },
 
-  onPageComplete({ pageIndex, pageNumber }) {
-    this.setState({ pageIndex, pageNumber });
+  onPageComplete(currentPage, page) {
+    this.setState({ currentPage });
   }
 
   render() {
@@ -50,7 +50,7 @@ class MyApp extends Component {
           onDocumentComplete={this.onDocumentComplete}
           onPageComplete={this.onPageComplete}
         />
-        <p>Page {this.state.pageNumber} of {this.state.total}</p>
+        <p>Page {this.state.currentPage} of {this.state.numberOfPages}</p>
       </div>
     );
   }
