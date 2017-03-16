@@ -32,7 +32,7 @@ class MyApp extends Component {
     this.onPageComplete = this.onPageComplete.bind(this);
   }
 
-  onDocumentComplete(numberOfPages, document) {
+  onDocumentComplete(numberOfPages, pdf) {
     this.setState({ numberOfPages });
   },
 
