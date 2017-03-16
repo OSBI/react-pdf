@@ -68,6 +68,10 @@ class MyApp extends Component {
 export default MyApp;
 ```
 
+## Storybook
+
+You can access saiku-react-pdfjs storybook [here](http://osbi.github.io/saiku-react-pdfjs/).
+
 ## Contributing
 
 If you want to help, please read the [Contributing](https://github.com/OSBI/saiku-react-pdfjs/blob/master/CONTRIBUTING.md) guide.
