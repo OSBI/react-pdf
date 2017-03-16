@@ -14,4 +14,23 @@
  *   limitations under the License.
  */
 
-export { default } from './SaikuPDF.js';
+const path = require('path');
+const webpackConfig = require('@kadira/storybook/dist/server/config/defaults/webpack.config.js');
+
+module.exports = function(config, env) {
+  const newConfig = webpackConfig(config, env);
+
+  newConfig.eslint = {
+    configFile: path.join(__dirname, './eslint.config.js'),
+    useEslintrc: false
+  };
+
+  newConfig.module.preLoaders = (newConfig.module.preLoaders || []).concat({
+    test: /\.js$/,
+    exclude: /node_modules/,
+    include: /src/,
+    loader: 'eslint'
+  });
+
+  return newConfig;
+};

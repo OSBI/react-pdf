@@ -1,0 +1,5 @@
+docs
+storybook
+.editorconfig
+.babelrc
+yarn.lock

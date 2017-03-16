@@ -14,4 +14,29 @@
  *   limitations under the License.
  */
 
-export { default } from './SaikuPDF.js';
+import { storiesOf } from '@kadira/storybook';
+import React from 'react';
+import SaikuPDF from './index';
+
+const PDF_FILE = 'http://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf';
+
+storiesOf('Saiku React PDF.js', module)
+  .add('Render PDF file', () => (
+    <SaikuPDF
+      file={PDF_FILE}
+    />
+  ))
+
+  .add('Selecting the page two', () => (
+    <SaikuPDF
+      file={PDF_FILE}
+      page={2}
+    />
+  ))
+
+  .add('Rotate the page 90 degrees', () => (
+    <SaikuPDF
+      file={PDF_FILE}
+      rotate={90}
+    />
+  ))
