@@ -80,6 +80,13 @@ If you want to help, please read the [Contributing](https://github.com/OSBI/saik
 
 For detailed changelog, see [Releases](https://github.com/OSBI/saiku-react-pdfjs/releases).
 
+## Credits
+
+Big thanks to these great repositories:
+
+- https://github.com/nnarhinen/react-pdf
+- https://github.com/erikras/react-pdfjs
+
 ## License
 
 [Apache License Version 2](https://github.com/OSBI/saiku-react-pdfjs/blob/master/LICENSE) © Meteorite BI
